@@ -1,4 +1,3 @@
-md2con
+md2con - markdown to confluence
 ======
 
-markdown to confluence
