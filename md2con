@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+require "redcarpet"
+
+# gem install redcarpet --version '3.0'
+
+if ARGV.length != 1
+    puts "usage: program path"
+    exit
+end
+
+input_path = ARGV[0]
+
+input = File.read(input_path)
+
+class Confluence < Redcarpet::Render::Base
+########################
+	# Block-level calls
+
+# autolink(link, link_type)
+# codespan(code)
+# double_emphasis(text)
+
+	def emphasis(text)
+		"'#{text}'"
+	end
+
+# image(link, title, alt_text)
+# linebreak()
+
+	def link(link, title, content)
+		if (title)
+			return "title : [#{content}|#{link}]"
+		else
+			return "[#{content}|#{link}]"
+		end
+	end
+
+# raw_html(raw_html)
+# triple_emphasis(text)
+
+	def strikethrough(text)
+		"-#{text}-"
+	end
+# superscript(text)
+# underline(text)
+# highlight(text)
+# quote(text)
+# footnote_ref(number)
+
+	########################
+	# Span-level calls
+# block_code(code, language)
+
+# block_code(code, language)
+# block_quote(quote)
+# block_html(raw_html)
+# footnotes(content)
+# footnote_def(content, number)
+
+	def header(text, header_level)
+		"h#{header_level}. #{text}\n"
+	end
+
+	def hrule() 
+		"----"
+	end
+
+	def list(contents, list_type)
+        contents.gsub('-', '-*')
+	end
+	
+	def list_item(text, list_type)
+		case list_type
+        when :ordered
+        	"- #{text}"
+        when :unordered
+        	"- #{text}"
+        end
+	end
+
+	def paragraph(text)
+		"#{text}\n"
+	end
+# table(header, body)
+# table_row(content)
+# table_cell(content, alignment)
+
+#	def entity(text)
+#	def normal_text(text)
+
+# preprocess(full_document)
+	def postprocess(full_document)
+        full_document.gsub(/^-(\*+)/m, '\1')
+	end
+end
+
+markdown = Redcarpet::Markdown.new(Confluence, :autolink => true, :space_after_headers => true)
+output = markdown.render(input)
+puts output
